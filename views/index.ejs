@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bobbycar Updates V2</title>
+</head>
+
+<body>
+    <style>
+        .link {
+            display: flex;
+            align-items: center;
+        }
+
+        .hash-color {
+            background-color: black;
+            border: 1px solid white;
+            margin: 1px;
+            width: 10px;
+            height: 10px;
+            margin-left: 8px;
+        }
+
+        .build {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .muted {
+            text-decoration: none;
+            color: rgba(65, 64, 64, 0.788);
+        }
+
+        .muted:hover {
+            text-decoration: underline !important;
+        }
+
+        html {
+            font-family: sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #212529;
+            background-color: #fff;
+        }
+    </style>
+    <h1>Bobbycar Updates V2</h1>
+    <ul>
+        <% for (const name in resolvedLatestBuilds) { %>
+            <li class="latest">
+                <a class="link" href="<%= resolvedLatestBuilds[name]?.href %>">
+                    <%= name %> (<%= decodeURIComponent(resolvedLatestBuilds[name]?.name) %> - <%= git_log[resolvedLatestBuilds[name]?.short_sha]?.message %>)
+                    <div class="hash-color" style="background-color: #<%= resolvedLatestBuilds[name]?.color %>;"></div>
+                </a>
+            </li>
+        <% } %>
+    </ul>
+    <hr>
+    <% for (const name in listing) { %>
+        <h1 id="<%= name %>"><%= name %> (<%= listing[name].length %>)</h1>
+        <ul>
+            <% for (const build of listing[name]) { %>
+                <li class="build">
+                    <a class="link" href="<%= build.href %>">
+                        <%= decodeURIComponent(build.name) %>
+                    </a>
+                    <p style="margin: 0 5px"> - </p>
+                    <a class="link <%= !git_log[build.short_sha]?.message && 'muted' %>" target="_blank" href="https://github.com/bobbycar-graz/bobbycar-boardcomputer-firmware/commit/<%= git_log[build.short_sha]?.hash ?? build.short_sha %>">
+                        <i><%= git_log[build.short_sha]?.message ?? 'Open in github (URL may be wrong)' %></i>
+                        <div class="hash-color" style="background-color: #<%= build.color %>;"></div>
+                    </a>
+                </li>
+            <% } %>
+        </ul>
+    <% } %>
+</body>
+
+</html>
