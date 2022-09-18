@@ -4,6 +4,7 @@ import "ejs";
 
 import builds from "./builds.js";
 import otaDescriptor from "./otaDescriptor.js";
+import utils from "./utils.js";
 
 const app = express();
 
@@ -23,11 +24,37 @@ app.get("/", async (req, res) => {
     const listing = await builds.generateListing();
     const resolvedLatestBuilds = await builds.resolveLatestBuilds();
     const git_log = await builds.generate_git_mapping();
+
+    const totalSize = {};
+    totalSize["__total"] = 0;
+
+    for (const key in listing) {
+        const build = listing[key];
+        totalSize[key] = 0;
+
+        for (const file of build) {
+            totalSize[key] += file.size;
+        }
+
+        totalSize["__total"] += totalSize[key];
+        totalSize[key] = utils.fileSizeToString(totalSize[key]);
+    }
+
+    totalSize["__total"] = utils.fileSizeToString(totalSize["__total"]);
+
+    let totalFiles = 0;
+
+    for (const key in listing) {
+        const build = listing[key];
+        totalFiles += build.length;
+    }
     
     res.render("index", {
         listing,
         resolvedLatestBuilds,
-        git_log
+        git_log,
+        totalSize,
+        totalFiles,
     });
 });
 

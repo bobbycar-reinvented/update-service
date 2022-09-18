@@ -46,7 +46,7 @@
             background-color: #fff;
         }
     </style>
-    <h1>Bobbycar Updates V2</h1>
+    <h1>Bobbycar Updates V2 (<%= totalFiles %> binaries, <%= totalSize['__total'] %>)</h1>
     <ul>
         <% for (const name in resolvedLatestBuilds) { %>
             <li class="latest">
@@ -59,12 +59,12 @@
     </ul>
     <hr>
     <% for (const name in listing) { %>
-        <h1 id="<%= name %>"><%= name %> (<%= listing[name].length %>)</h1>
+        <h1 id="<%= name %>"><%= name %> (<%= listing[name].length %> binaries, <%= totalSize[name] %>)</h1>
         <ul>
             <% for (const build of listing[name]) { %>
                 <li class="build">
                     <a class="link" href="<%= build.href %>">
-                        <%= decodeURIComponent(build.name) %>
+                        <%= decodeURIComponent(build.name) %> (<%= build.sizeString %>)
                     </a>
                     <p style="margin: 0 5px"> - </p>
                     <a class="link <%= !git_log[build.short_sha]?.message && 'muted' %>" target="_blank" href="https://github.com/bobbycar-graz/bobbycar-boardcomputer-firmware/commit/<%= git_log[build.short_sha]?.hash ?? build.short_sha %>">

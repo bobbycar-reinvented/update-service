@@ -2,6 +2,7 @@ import fs, { symlinkSync } from 'fs';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import child_process from 'child_process';
+import utils from './utils.js';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const git_path = path.join(__dirname, 'bobbycar-boardcomputer-firmware');
@@ -17,11 +18,14 @@ export async function generateListing() { // json file tree
             .filter(dirent => dirent.isFile())
             .map(dirent => {
                 const _object = filename_to_object(dirent.name);
+                const stats = fs.statSync(path.join(__dirname, 'builds', dir, dirent.name));
                 return {
                     name: dirent.name,
                     path: path.join(__dirname, 'builds', dir, dirent.name),
                     href: path.join('/builds', dir, dirent.name),
-                    lastModified: fs.statSync(path.join(__dirname, 'builds', dir, dirent.name)).mtime,
+                    lastModified: stats.mtime,
+                    size: stats.size,
+                    sizeString: utils.fileSizeToString(stats.size),
                     ..._object
                 }
             })
